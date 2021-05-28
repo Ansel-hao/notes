@@ -44,7 +44,7 @@ def do_query(c,db,data):
     db.insert_history(name, word)
     mean = db.query(word)
     if not mean:
-        c.send("没有找到该单词")
+        c.send("没有找到该单词".encode())
     else:
         msg = "%s : %s"%(word,mean)
         c.send(msg.encode())
