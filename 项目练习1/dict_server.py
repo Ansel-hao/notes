@@ -5,7 +5,7 @@ dict 服务端部分
 
 from socket import *
 from threading import Thread
-import signal
+# import signal
 import sys
 from operation_db import *
 
@@ -14,6 +14,17 @@ from operation_db import *
 HOST = '0.0.0.0'
 PORT = 8000
 ADDR = (HOST,PORT)
+
+def do_login_reg(c,db,data):
+    tmp = data.split(' ')
+    name = tmp[1]
+    passwd = tmp[2]
+    if db.db_login_reg(name,passwd):
+        c.send(b'OK')
+    else:
+        c.send(b'FAIL')
+
+
 
 def do_register(c,db,data):
     tmp = data.split(' ')
@@ -30,9 +41,15 @@ def do_request(c,db):
     while True:
         try:
             data = c.recv(1024).decode()
-            print(c.getpeername(),':',data)
-            if data[0] == 'R':
+            print(c.getpeername(),':',data.split(' ')[1])
+            if not data or data[0] == 'Q':
+                c.close()
+                sys.exit("客户端退出")
+            elif data[0] == 'R':
                 do_register(c,db,data)
+            elif data[0] == 'L':
+                do_login_reg(c,db,data)
+
         except Exception as e:
             continue
 # 网路连接
@@ -57,6 +74,7 @@ def main():
             print("connect from",addr)
         except KeyboardInterrupt:
             s.close()
+            db.close()
             sys.exit("服务器退出")
         except Exception as e:
             print(e)

@@ -4,6 +4,7 @@ dict 客户端
 
 from socket import *
 from getpass import getpass
+import sys
 
 ADDR = ('127.0.0.1',8000)
 s = socket()
@@ -65,14 +66,14 @@ def do_login():
         print("登录成功")
         login(name)
     else:
-        print("登录失败")
+        print("用户名或密码不对")
 
 
 # 创建网络连接
 def main():
     while True:
         print("""
-        =========================welcome=================
+        ====================welcome======================
          1. 注册             2. 登录                3. 退出
         =================================================
         """)
@@ -82,7 +83,8 @@ def main():
         elif cmd == '2':
             do_login()
         elif cmd == '3':
-            s.send(cmd.encode())
+            s.send("Q 拜拜 bey!".encode())
+            sys.exit("客户端退出")
         else:
             print("请输入正确")
 

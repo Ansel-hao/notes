@@ -56,3 +56,17 @@ class Database:
             return False
         return True
 
+    # 处理登录
+    def db_login_reg(self,name,passwd):
+        sql = "select * from user where name='%s'" % name
+        self.cur.execute(sql)
+        r = self.cur.fetchone()  # 如果查询到结果
+        if r:
+            hash = hashlib.md5((name + "haha").encode())
+            hash.update(passwd.encode())
+            if r[2] == hash.hexdigest():
+                return True
+        else:
+            return False
+
+
