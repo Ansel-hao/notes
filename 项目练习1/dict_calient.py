@@ -10,6 +10,32 @@ ADDR = ('127.0.0.1',8000)
 s = socket()
 s.connect(ADDR)
 
+# 查单词
+def do_query(name):
+    while True:
+        word = input("单词：")
+        if word == '##':
+            break
+        msg = "C %s %s"%(name,word)
+        s.send(msg.encode())
+        # 等待回复
+        data = s.recv(2048).decode()
+        print(data)
+
+
+def do_hist(name):
+    msg = "H %s"%name
+    s.send(msg.encode())
+    data = s.recv(128).decode()
+    if data == 'OK':
+        while True:
+            data = s.recv(1024).decode()
+            if data == '##':
+                break
+            print(data)
+    else:
+        print("还没有历史记录")
+
 # 二级界面
 def login(name):
     print("""
@@ -19,9 +45,9 @@ def login(name):
             """)
     cmd = input("输入选像：")
     if cmd == '1':
-        do_register()
+        do_query(name)
     elif cmd == '2':
-        do_login()
+        do_hist(name)
     elif cmd == '3':
         return
     else:
